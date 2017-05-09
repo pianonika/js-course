@@ -88,19 +88,28 @@ console.log(resultReturnCounter());
  Функция должна привязать переданные аргументы к функции F и вернуть получившуюся функцию
  */
 
- var firstArg = 2;
- var secondArg = 30;
 
- function speech(firstArg, secondArg) {
-    alert('Хочу сказать: "' + firstArg + ' ' + secondArg + '!"');
-  };
-
- function bindFunction(fn, firstArg, secondArg) {
-   return fn.bind(null, firstArg, secondArg);
+function speech() {
+ var fraze = '';
+ for (var i = 0; i < arguments.length; i++) {
+   fraze = fraze + ' ' + arguments[i];
  }
+  alert('Хочу сказать: "' + fraze + '!"');
+};
 
+
+function bindFunction(fn) {
+ var args = [];
+ for (var i = 0; i < arguments.length; i++) {
+   args[i-1] = arguments[i];
+ }
+ return function () {
+   return fn.apply(null, args);
+ }
+}
 var g = bindFunction(speech, 'Задание', 'выполнено');
 g();
+
 
 export {
     returnFirstArgument,
