@@ -113,7 +113,7 @@ function findError(where) {
  * должно быть преобразовано в <div></div><p></p>
  */
 function deleteTextNodes(where) {
-    var childrenList= where.childNodes;
+    var childrenList = where.childNodes;
 
     for (var i = 0; i < childrenList.length; i++) {
         if (childrenList[i].nodeType == 3) {
@@ -133,26 +133,16 @@ function deleteTextNodes(where) {
  * после выполнения функции, дерево <span> <div> <b>привет</b> </div> <p>loftchool</p> !!!</span>
  * должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
-//  var test = document.createElement('div');
-//  test.innerHTML = '<span> <div> <b>привет</b> </div> <p>loftchool</p> !!!</span>';
-//
-// console.log(deleteTextNodesRecursive(test));
-//
-
 function deleteTextNodesRecursive(where) {
-    var childrenList = where.childNodes;
-    var childrenArr = where.children;
+    var childrenList = where.children;
+    var currNode;
+
+    deleteTextNodes(where);
 
     for (var i = 0; i < childrenList.length; i++) {
-        var currentElement = childrenList[i];
+        currNode = childrenList[i];
 
-        if (currentElement.nodeType == 3) {
-            where.removeChild(currentElement);
-        }
-    }
-
-    for (var n = 0; n < childrenArr.length; n++) {
-        deleteTextNodesRecursive(childrenArr[n]);
+        deleteTextNodesRecursive(currNode);
     }
 }
 
@@ -178,53 +168,79 @@ function deleteTextNodesRecursive(where) {
  *   texts: 3
  * }
  */
-var div = document.createElement('div');
-div.innerHTML = '<div class="some-class-1"><b>привет!</b> <b class="some-class-1 some-class-2">loftschool</b></div>';
 
+// var test = document.createElement('div');
+// test.innerHTML = '<div class="some-class-1"><b>привет!</b> <b class="some-class-1 some-class-2">loftschool</b></div>';
+//
+// console.log(collectDOMStat(test));
 
+function collectDOMStat(root) {
+    var childrenNodesList = root.childNodes;
+    var statistics =  {tags: {}, classes: {}, texts: 0};
+    var currNode;
 
-function calcTextNodes(where, textNodes) {
-    var childrenList = where.childNodes;
-    var childrenArr = where.children;
+    for (var i = 0; i < childrenNodesList.length; i++) {
 
-    textNodes = textNodes || 0;
-    console.log(textNodes);
+        currNode = childrenNodesList[i];
 
-    for (var i = 0; i < childrenList.length; i++) {
-        var currentElement = childrenList[i];
+        /* texts of Node */
+        if (currNode.nodeType == 3) {
+            statistics.texts++;
+        }
 
-        if (currentElement.nodeType == 3) {
-            textNodes++;
+        /* tags of Node */
+        if (currNode.nodeType == 1) {
+            var currTag = currNode.tagName;
+            var classList = currNode.classList;
+
+            for (var k = 0 ; k < currNode.classList.length; k++) {
+                var currClass= classList[k];
+
+                if (statistics.classes[currClass] === undefined) {
+                    statistics.classes[currClass] = 1;
+                } else {
+                    statistics.classes[currClass]++;
+                }
+            }
+
+            if (statistics.tags[currTag] === undefined) {
+                statistics.tags[currTag] = 1;
+            } else {
+                statistics.tags[currTag]++;
+            }
+        }
+
+        var dipperEl = collectDOMStat(currNode);
+
+        statistics.texts = statistics.texts + dipperEl.texts;
+
+        for (var j in dipperEl.tags) {
+            if (j in statistics.tags) {
+                statistics.tags[j] += dipperEl.tags[j];
+            } else {
+                statistics.tags[j] = dipperEl.tags[j];
+            }
+        }
+
+        for (var n in dipperEl.classes) {
+            if (n in statistics.classes) {
+                statistics.classes[n] += dipperEl.classes[n];
+            } else {
+                statistics.classes[n] = dipperEl.classes[n];
+            }
         }
 
     }
 
-
-    if (childrenArr.length == 0) {
-        return textNodes;
-    }
-
-    for (var n = 0; n < childrenArr.length; n++) {
-        calcTextNodes(childrenArr[n], textNodes);
-    }
-}
-
-function collectDOMStat(root) {
-  // * - количество текстовых узлов
-  // * - количество элементов каждого класса
-  // * - количество элементов каждого тега
-
-    calcTextNodes(root);
-
-    return 'Количество текстовых узлов:' + textNodes;
+    return statistics;
 }
 
 /**
  * *** Со звездочкой ***
  * Функция должна отслеживать добавление и удаление элементов внутри элемента where
- * Как только в where добавляются или удаляются элемента,
+ * Как только в where добавляются или удаляются элементы,
  * необходимо сообщать об этом при помощи вызова функции fn со специальным аргументом
- * В качестве аргумента должен быть передан объек с двумя свойствами:
+ * В качестве аргумента должен быть передан объект с двумя свойствами:
  * - type: типа события (insert или remove)
  * - nodes: массив из удаленных или добавленных элементов (а зависимости от события)
  * Отслеживание должно работать вне зависимости от глубины создаваемых/удаляемых элементов
@@ -251,6 +267,8 @@ function collectDOMStat(root) {
  * }
  */
 function observeChildNodes(where, fn) {
+
+
 }
 
 export {
