@@ -133,26 +133,27 @@ function deleteTextNodes(where) {
  * после выполнения функции, дерево <span> <div> <b>привет</b> </div> <p>loftchool</p> !!!</span>
  * должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
- var test = document.createElement('div');
- test.innerHTML = '<span> <div> <b>привет</b> </div> <p>loftchool</p> !!!</span>';
-
-console.log(deleteTextNodesRecursive(test));
+//  var test = document.createElement('div');
+//  test.innerHTML = '<span> <div> <b>привет</b> </div> <p>loftchool</p> !!!</span>';
+//
+// console.log(deleteTextNodesRecursive(test));
+//
 
 function deleteTextNodesRecursive(where) {
     var childrenList = where.childNodes;
-    var childrenArr = [];
+    var childrenArr = where.children;
 
     for (var i = 0; i < childrenList.length; i++) {
-        childrenArr.push(childrenList[i]);
+        var currentElement = childrenList[i];
+
+        if (currentElement.nodeType == 3) {
+            where.removeChild(currentElement);
+        }
     }
 
-    var result = childrenArr.reduce(function(sum, current) {
-        if (current.nodeType != 3) {
-            return sum + current;
-        }
-    }, '');
-
-    return result;
+    for (var n = 0; n < childrenArr.length; n++) {
+        deleteTextNodesRecursive(childrenArr[n]);
+    }
 }
 
 /**
@@ -177,7 +178,45 @@ function deleteTextNodesRecursive(where) {
  *   texts: 3
  * }
  */
+var div = document.createElement('div');
+div.innerHTML = '<div class="some-class-1"><b>привет!</b> <b class="some-class-1 some-class-2">loftschool</b></div>';
+
+
+
+function calcTextNodes(where, textNodes) {
+    var childrenList = where.childNodes;
+    var childrenArr = where.children;
+
+    textNodes = textNodes || 0;
+    console.log(textNodes);
+
+    for (var i = 0; i < childrenList.length; i++) {
+        var currentElement = childrenList[i];
+
+        if (currentElement.nodeType == 3) {
+            textNodes++;
+        }
+
+    }
+
+
+    if (childrenArr.length == 0) {
+        return textNodes;
+    }
+
+    for (var n = 0; n < childrenArr.length; n++) {
+        calcTextNodes(childrenArr[n], textNodes);
+    }
+}
+
 function collectDOMStat(root) {
+  // * - количество текстовых узлов
+  // * - количество элементов каждого класса
+  // * - количество элементов каждого тега
+
+    calcTextNodes(root);
+
+    return 'Количество текстовых узлов:' + textNodes;
 }
 
 /**
