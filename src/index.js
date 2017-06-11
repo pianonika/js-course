@@ -242,7 +242,7 @@ function collectDOMStat(root) {
  * необходимо сообщать об этом при помощи вызова функции fn со специальным аргументом
  * В качестве аргумента должен быть передан объект с двумя свойствами:
  * - type: типа события (insert или remove)
- * - nodes: массив из удаленных или добавленных элементов (а зависимости от события)
+ * - nodes: массив из удаленных или добавленных элементов (в зависимости от события)
  * Отслеживание должно работать вне зависимости от глубины создаваемых/удаляемых элементов
  * Рекомендуется использовать MutationObserver
  *
@@ -260,7 +260,7 @@ function collectDOMStat(root) {
  * ------
  *
  * если из where или из одного из его детей удаляется элемент div
- * то fn должна быть вызвана с аргументов:
+ * то fn должна быть вызвана с аргументом:
  * {
  *   type: 'remove',
  *   nodes: [div]
@@ -268,7 +268,37 @@ function collectDOMStat(root) {
  */
 function observeChildNodes(where, fn) {
 
+    // создаем экземпляр MutationObserver, где mutationObjectCallback - функция обратного вызова
+    var observerObject = new MutationObserver(function(mutations) {
+        var info = { type: '', nodes: [] };
+        // console.log(mutationObjectCallback);
 
+        mutations.forEach(function (mutation) {
+
+            // addedNodes- массив добавленных узлов, removedNodes - массив уделенных узлов
+            if ( mutation.type == 'childList' ) {
+                if (mutation.addedNodes.length >= 1) {
+                    info.type = 'insert';
+                    for (var a = 0; a < mutation.addedNodes.length; a++) {
+                        info.nodes.push(mutation.addedNodes[a]);
+                    }
+                } else if (mutation.removedNodes.length >= 1) {
+                    info.type = 'remove';
+                    for (var l = 0; l < mutation.removedNodes.length; l++) {
+                        info.nodes.push(mutation.removedNodes[l]);
+                    }
+                }
+
+                fn(info);
+            }
+        });
+    });
+
+    // а именно за добавлением и удалением дочерних узлов
+    var config = { childList: true };
+
+    // следим за изменениями в узле where
+    observerObject.observe(where, config);
 }
 
 export {
