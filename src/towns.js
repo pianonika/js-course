@@ -64,19 +64,6 @@ function loadTowns() {
     });
 }
 
-function townsDounload () {
-    townsPromise = loadTowns()
-    .then(function(result) {
-        loadingBlock.style.display = 'none';
-        filterBlock.style.display = 'block';
-
-        towns = result;
-    }, function() {
-        loadingBlock.textContent= 'Не удалось загрузить города';
-
-    });
-}
-
 // console.log(if (townsPromise));
 /**
  * Функция должна проверять встречается ли подстрока chunk в строке full
@@ -94,22 +81,60 @@ function townsDounload () {
 function isMatching(full, chunk) {
     var seachPatch = new RegExp(chunk, 'i');
 
-    if (full.search( seachPatch) === -1) {
+    if (full.search(seachPatch) === -1) {
         return false;
     }
 
     return true;
 }
 
+function townsDounload () {
+    loadTowns()
+    .then(function(result) {
+        loadingBlock.style.display = 'none';
+        filterBlock.style.display = 'block';
+
+        towns = result;
+
+    }, function() {
+        loadingBlock.textContent= 'Не удалось загрузить города';
+        var btnReload = document.createElement('button');
+
+        btnReload.id = 'btnReload';
+        btnReload.innerHTML = 'Повторить загрузку';
+        loadingBlock.innerHTML = 'Что-то пошло не так';
+
+        btnReload.addEventListener('click', function() {
+            loadingBlock.innerHTML = 'Загрузка...';
+            townsDounload();
+        })
+
+    });
+}
+
 let loadingBlock = homeworkContainer.querySelector('#loading-block');
 let filterBlock = homeworkContainer.querySelector('#filter-block');
 let filterInput = homeworkContainer.querySelector('#filter-input');
 let filterResult = homeworkContainer.querySelector('#filter-result');
-let townsPromise;
 let towns;
+
+townsDounload();
 
 filterInput.addEventListener('keyup', function() {
 
+    filterResult.innerHTML = '';
+    var inputValue = filterInput.value;
+
+    if (inputValue != '') {
+        for (var obj of towns) {
+            var currTown = obj.name;
+            var suitableValue = isMatching(currTown, inputValue);
+
+            if (suitableValue) {
+                filterResult.innerHTML += '<br>' + currTown;
+            }
+        }
+    }
 });
 
 export {
