@@ -70,7 +70,7 @@ function sortList(filterValue) {
             var cookieName = coockieEl.name;
             var cookieValue = coockieEl.value;
 
-            if (isMatching(cookieName, filterValue)) {
+            if (isMatching(cookieName, filterValue) || isMatching(cookieValue, filterValue)) {
                 cookieTable += '<tr><td>' + cookieName + '</td><td>' + cookieValue +
                 '</td><td><button class="button elId' + key + '">X</button></td></tr>';
             }
