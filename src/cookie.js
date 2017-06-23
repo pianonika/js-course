@@ -62,6 +62,7 @@ function deleteCookie(cookieName) {
 function sortList(filterValue) {
     if (cookiesList != []) {
         var cookieTable= '';
+        var cookiesListCurrent= [];
 
         listTable.innerHTML = '';
 
@@ -73,11 +74,35 @@ function sortList(filterValue) {
             if (isMatching(cookieName, filterValue) || isMatching(cookieValue, filterValue)) {
                 cookieTable += '<tr><td>' + cookieName + '</td><td>' + cookieValue +
                 '</td><td><button class="button elId' + key + '">X</button></td></tr>';
+                cookiesListCurrent.push(coockieEl);
             }
         }
         listTable.innerHTML = cookieTable;
     }
 }
+
+function sortList2(filterValue) {
+    if (cookiesList != []) {
+        var cookieTable= '';
+        var cookiesListCurrent= [];
+
+        listTable.innerHTML = '';
+
+        for (var key in cookiesList) {
+            var coockieEl = cookiesList[key];
+            var cookieName = coockieEl.name;
+            var cookieValue = coockieEl.value;
+
+            if (isMatching(cookieValue, filterValue)) {
+                cookieTable += '<tr><td>' + cookieName + '</td><td>' + cookieValue +
+                '</td><td><button class="button elId' + key + '">X</button></td></tr>';
+                cookiesListCurrent.push(coockieEl);
+            }
+        }
+        listTable.innerHTML = cookieTable;
+    }
+}
+
 filterNameInput.addEventListener('keyup', function() {
     var inputValue = filterNameInput.value;
 
@@ -122,11 +147,68 @@ addButton.addEventListener('click', () => {
     var addValue = addValueInput.value;
 
     if (!!addName) {
-        if (!isInArray(addName, addValue) || !cookiesList.length) {
-            cookiesList.push({ name: addName, value: addValue });
-        }
         createCookie(addName, addValue);
-    }
+        if (!inputValue) {
+            if(!cookiesList.length) {
+                cookiesList.push({ name: addName, value: addValue });
+            } else {
+                if (!isInArray(addName, addValue)) {
+                    cookiesList.push({ name: addName, value: addValue });
+                }
+            }
 
-    sortList(inputValue);
+            sortList(inputValue);
+        } else {
+            if (!isInArray(addName, addValue)) {
+                cookiesList.push({ name: addName, value: addValue });
+
+                if (isMatching(addName, inputValue)) {
+                    listTable.innerHTML += '<tr><td>' + addName + '</td><td>' + addValue +
+                    '</td><td><button class="button elId' + cookiesList.length + '">X</button></td></tr>';
+                }
+            } else {
+                if (isMatching(addName, inputValue)) {
+                    findRow(inputValue, addName, addValue);
+                }
+            }
+        }
+    }
 });
+
+function findRow(inputValue, addName, addValue) {
+    var rows = listTable.children;
+
+    for (var i = 0; i < rows.length; i++) {
+        var cells = rows[i].children;
+        var cellName = cells[0];
+        var cellValue = cells[1];
+        var cellBtn = cells[2].children;
+        var button = cellBtn[0];
+        console.log(cellName.innerHTML, addName, cellName.innerHTML == addName, addValue, inputValue, isMatching(addValue, inputValue));
+
+        if ((cellName.innerHTML === addName) && !isMatching(addValue, inputValue)) {
+            listTable.removeChild(rows[i]);
+        } else {
+          if ((cellName.innerHTML === addName) && isMatching(addValue, inputValue) ) {
+              createCookie(addName, addValue);
+              // console.log(cellValue.innerHTML, inputValue);
+              cookiesList = getCookies();
+              console.log(cookiesList);
+
+              sortList(inputValue);
+            }
+        }
+    }
+}
+
+function getCookies() {
+    var cookie = document.cookie;
+    var cookieArray = cookie.split('; ');
+    var cookieArrayFilter = cookieArray.filter(Boolean);
+    var next = cookieArrayFilter.map(cookie => cookie.match(/^([^=]+)=(.+)/));
+    var last = next.reduce((obj, [, objName, objValue]) => { obj.push({name: objName, value: objValue}); return obj; }, []);
+    // console.log(next);
+    // console.log(last);
+
+    return last;
+}

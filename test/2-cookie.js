@@ -184,7 +184,7 @@ describe('ДЗ 7.2 - Cookie editor', () => {
                 filterNameInput.dispatchEvent(new KeyboardEvent('keyup'));
                 assert.lengthOf(listTable.children, 1);
 
-                addNameInput.value = 'test-cookie-name-3';
+                addNameInput.value = 'test-cookie-name-3-value-2';
                 addValueInput.value = 'test-cookie-more-value-2';
                 addButton.click();
 
