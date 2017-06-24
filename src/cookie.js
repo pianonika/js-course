@@ -40,6 +40,15 @@ let addButton = homeworkContainer.querySelector('#add-button');
 let listTable = homeworkContainer.querySelector('#list-table tbody');
 let cookiesList = [];
 
+window.onload = function() {
+    init();
+};
+
+function init() {
+    cookiesList = getCookies();
+    sortList();
+}
+
 function isMatching(full, chunk) {
     var seachPatch = new RegExp(chunk, 'i');
 
@@ -60,6 +69,7 @@ function deleteCookie(cookieName) {
 }
 
 function sortList(filterValue) {
+    cookiesList = getCookies();
     if (cookiesList != []) {
         var cookieTable= '';
         var cookiesListCurrent= [];
@@ -148,8 +158,8 @@ addButton.addEventListener('click', () => {
 
     if (!!addName) {
         createCookie(addName, addValue);
-        if (!inputValue) {
-            if(!cookiesList.length) {
+        if (!inputValue) { // фильтр не задан
+            if (!cookiesList.length) {
                 cookiesList.push({ name: addName, value: addValue });
             } else {
                 if (!isInArray(addName, addValue)) {
@@ -158,18 +168,16 @@ addButton.addEventListener('click', () => {
             }
 
             sortList(inputValue);
-        } else {
-            if (!isInArray(addName, addValue)) {
+        } else { // фильтр задан
+            if (!isInArray(addName, addValue)) { // элемента с таким именем нет в массиве
                 cookiesList.push({ name: addName, value: addValue });
 
                 if (isMatching(addName, inputValue)) {
                     listTable.innerHTML += '<tr><td>' + addName + '</td><td>' + addValue +
                     '</td><td><button class="button elId' + cookiesList.length + '">X</button></td></tr>';
                 }
-            } else {
-                if (isMatching(addName, inputValue)) {
-                    findRow(inputValue, addName, addValue);
-                }
+            } else { // элемент с таким именем есть в массиве и мы его перезаписываем
+                findRow(inputValue, addName, addValue);
             }
         }
     }
@@ -181,21 +189,16 @@ function findRow(inputValue, addName, addValue) {
     for (var i = 0; i < rows.length; i++) {
         var cells = rows[i].children;
         var cellName = cells[0];
-        var cellValue = cells[1];
-        var cellBtn = cells[2].children;
-        var button = cellBtn[0];
-        console.log(cellName.innerHTML, addName, cellName.innerHTML == addName, addValue, inputValue, isMatching(addValue, inputValue));
 
         if ((cellName.innerHTML === addName) && !isMatching(addValue, inputValue)) {
+            createCookie(addName, addValue);
             listTable.removeChild(rows[i]);
         } else {
-          if ((cellName.innerHTML === addName) && isMatching(addValue, inputValue) ) {
-              createCookie(addName, addValue);
-              // console.log(cellValue.innerHTML, inputValue);
-              cookiesList = getCookies();
-              console.log(cookiesList);
+            if ((cellName.innerHTML === addName) && isMatching(addValue, inputValue) ) {
+                createCookie(addName, addValue);
+                cookiesList = getCookies();
 
-              sortList(inputValue);
+                sortList(inputValue);
             }
         }
     }
@@ -206,9 +209,7 @@ function getCookies() {
     var cookieArray = cookie.split('; ');
     var cookieArrayFilter = cookieArray.filter(Boolean);
     var next = cookieArrayFilter.map(cookie => cookie.match(/^([^=]+)=(.+)/));
-    var last = next.reduce((obj, [, objName, objValue]) => { obj.push({name: objName, value: objValue}); return obj; }, []);
-    // console.log(next);
-    // console.log(last);
+    var last = next.reduce((obj, [, objName, objValue]) => {obj.push({name: objName, value: objValue}); return obj; }, []);
 
     return last;
 }
