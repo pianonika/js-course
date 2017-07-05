@@ -1,0 +1,131 @@
+body
+{
+  font-family: Helvetica;
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+}
+.container{
+  background-color: #a0a0a0;
+  height: 100vh;
+}
+
+.popup {
+  width: 800px;
+  height: 600px;
+  overflow: hidden;
+  margin: auto;
+  border-radius: 12px;
+  background-color: #fff;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+}
+.popup_header {
+  color: #fff;
+  background-color: #f68570;
+  padding: 10px 23px;
+}
+.popup_content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+}
+.popup_side {
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 50%;
+  overflow: hidden;
+}
+.popup_search {
+  background-color: #f2f2f2;
+  padding: 12px 0 12px 18px;
+  overflow: hidden;
+}
+.popup_friends{
+  background-color: #fff;
+  padding: 12px 18px;
+  font-weight: bold;
+}
+.popup_friends:not(first-of-type) {
+  border-left: 1px solid #f2f2f2;
+}
+.popup_friends-title {
+  margin: 6px 0;
+}
+.popup_footer {
+  color: #fff;
+  background-color: #f2f2f2;
+  padding: 10px 23px;
+}
+.popup_list {
+  overflow-y: scroll;
+  width: calc(100% + 100px);
+  height: 410px;
+}
+.btn {
+  background-color: #f68570;
+  border-radius: 12px;
+  color: #fff;
+  padding: 10px 23px;
+  text-decoration: none;
+  float: right;
+}
+.btn:hover {
+  background-color: #f75537;
+}
+.input-field {
+  padding: 9px 23px 9px 36px;
+  float: left;
+  border-radius: 16px;
+  border: none;
+  width: calc(100% - 12px);
+  box-sizing: border-box;
+}
+.add-btn {
+  color: #f2f2f2;
+  font-weight: bold;
+  position: absolute;
+  right: 0;
+  font-size: 33px;
+}
+
+#friends
+{
+  display: flex;
+  flex-wrap: wrap;
+  flex-wrap: wrap;
+  flex-direction: column;
+  cursor: move;
+}
+
+.friend {
+  display: flex;
+  flex-direction: row;
+  border-top: 1px solid #f2f2f2;
+  align-items: center;
+  width: calc(100% - 85px);
+  position: relative;
+}
+
+.friend img
+{
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin: 7px;
+}
+
+
+[draggable] {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  /* Required to make elements draggable in old WebKit */
+  -khtml-user-drag: element;
+  -webkit-user-drag: element;
+}
