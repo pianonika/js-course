@@ -15,8 +15,9 @@ loaders.push({
 
 module.exports = {
     entry: {
-        main: './src/index.js',
-        cookie: './src/cookie.js'
+        main: './src/index.js'
+        // ,
+        // cookie: './src/vk-list.js'
     },
     output: {
         filename: '[name].[hash].js',
@@ -37,14 +38,15 @@ module.exports = {
         new HtmlPlugin({
             title: 'Main Homework',
             template: 'index.hbs',
+            filename: 'vk-list.html',
             chunks: ['main']
         }),
-        new HtmlPlugin({
-            title: 'Div Drag And Drop',
-            template: 'cookie.hbs',
-            filename: 'cookie.html',
-            chunks: ['cookie']
-        }),
+        // new HtmlPlugin({
+        //     title: 'Div Drag And Drop',
+        //     template: 'vk-list.hbs',
+        //     filename: 'vk-list.html',
+        //     chunks: ['cookie']
+        // }),
         new CleanWebpackPlugin(['dist'])
     ]
 };

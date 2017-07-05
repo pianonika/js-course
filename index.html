@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="http://vk.com/js/api/openapi.js" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <div class="popup">
+    <div class="popup_header">Выберите друзей</div>
+
+    <div class="popup_content"> 
+      <div class="popup_side">
+        <div class="popup_search"><input type="text" class="input-field" id="#searchFromAll" placeholder="Начните вводить имя друга"></div>
+        <div class="popup_friends">
+          <div class="popup_friends-title">Ваши друзья</div>
+          <div class="popup_list">
+            <div id="friends"></div>
+          </div>
+        </div>
+      </div>
+      <div class="popup_side">
+        <div class="popup_search"><input type="text" class="input-field" id="#searchFromAll" placeholder="Начните вводить имя друга"></div>
+        <div class="popup_friends">
+          <div class="popup_friends-title">Друзьяв списке</div>
+          <div class="popup_list">
+            <div id="friendsChoosen"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="popup_footer"><a href="#" id="safe" class="btn">Сохранить</a></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
