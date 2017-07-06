@@ -1,52 +1,63 @@
-/* ДЗ 7.1 - BOM */
+function vkApi(method, options) {
+    if (!options.v) {
+        options.v = '5.64';
+    }
 
-/**
- * Функция должна создавать окно с указанным именем и размерами
- *
- * @param {number} name - имя окна
- * @param {number} width - ширина окна
- * @param {number} height - высота окна
- * @return {Window}
- */
-function createWindow(name, width, height) {
-    var newwin = window.open('hello', 'width=' + width + ',height=' + height);
-
-    return newwin;
+    return new Promise((resolve, reject) => {
+        VK.api(method, options, data => {
+            if (data.error) {
+                reject(new Error(data.error.error_msg));
+            } else {
+                resolve(data.response);
+            }
+        });
+    });
 }
 
-/**
- * Функция должна закрывать указанное окно
- *
- * @param {Window} window - окно, размер которого надо изменить
- */
-function closeWindow(window) {
-    window.close();
+function vkInit() {
+    return new Promise((resolve, reject) => {
+        VK.init({
+            apiId: 5267932
+        });
+
+        VK.Auth.login(data => {
+            if (data.session) {
+                resolve();
+            } else {
+                reject(new Error('Не удалось авторизоваться'));
+            }
+        }, 2);
+    });
 }
 
-/**
- * Функция должна создавать cookie с указанными именем и значением
- *
- * @param name - имя
- * @param value - значение
- */
-function createCookie(name, value) {
-    var date = new Date(new Date().getTime() + 60 * 1000);
+var template = `
+{{#each items}}
+    <div class="friend" draggable="true">
+        <img src="{{photo_200}}">
+        <div class="name">{{first_name}} {{last_name}}</div>
+        <div class="move-btn"></div>
+    </div>
+{{/each}}
+`;
+var templateFn = Handlebars.compile(template);
 
-    document.cookie = name + '=' + value + ';' + 'expires=' + date.toUTCString();
+function friendsListInit(response) {
+    friendsListContainier.innerHTML = templateFn(response);
 }
 
-/**
- * Функция должна удалять cookie с указанным именем
- *
- * @param name - имя
- */
-function deleteCookie(name) {
-    document.cookie = name + '=; expires=Thu, 01 Jan 2017 00:00:00 GMT;';
+function vkQuery() {
+    new Promise(resolve => window.onload = resolve)
+        .then(() => vkInit())
+        .then(() => vkApi('users.get', {name_case: 'gen'}))
+        // .then(response => {
+        //     headerInfo.textContent = `Друзья ${response[0].first_name} ${response[0].last_name}`;
+        // })
+        .then(() => vkApi('friends.get', {fields: 'photo_200'}))
+        .then(response => friendsListInit(response))
+        .then(() => init())
+        .catch(e => alert('Ошибка: ' + e.message));
 }
 
 export {
-    createWindow,
-    closeWindow,
-    createCookie,
-    deleteCookie
+    vkQuery
 };

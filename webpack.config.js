@@ -15,9 +15,9 @@ loaders.push({
 
 module.exports = {
     entry: {
-        main: './src/index.js'
+        main: './scipts.js'
         // ,
-        // cookie: './src/vk-list.js'
+        // dnd: './src/dnd.js'
     },
     output: {
         filename: '[name].[hash].js',
