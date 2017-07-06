@@ -6,6 +6,8 @@ let defaultList = {};
 let friendsList = {};
 let friendsChoosenList = {};
 let idList = [];
+let searchFromFriends = document.querySelector('#searchFromFriends');
+let searchFromChoosenFriends = document.querySelector('#searchFromChoosenFriends');
 
 
 function vkApi(method, options) {
@@ -40,11 +42,24 @@ function vkInit() {
     });
 }
 
+Handlebars.registerHelper('if', function(conditional, options) {
+  if(conditional) {
+    return options.fn(this);
+  } else {
+    return options.inverse(this);
+  }
+});
+
 var template = `
 {{#each this}}
     <div class="friend" draggable="true" data-id="{{@key}}">
-        <img src="{{photo}}">
-        <div class="name">{{first_name}} {{last_name}}</div>
+        {{#if photo}}
+            <img src="{{photo}}">
+        {{else}}
+            <img src="https://vk.com/images/deactivated_100.png">
+        {{/if}}
+
+        <div class="name">{{name}}</div>
         <div class="move-btn"></div>
     </div>
 {{/each}}
@@ -93,7 +108,16 @@ function initChoosenFriendsList() {
         friendsChoosenList[id] = defaultList[id];
         delete friendsList[id];
     });
-    console.log(friendsChoosenList);
+
+    if (searchFromFriends.value != "") {
+      friendsList = filterlist(searchFromFriends.value, friendsList);
+      console.log('123');
+    }
+
+    if (searchFromChoosenFriends.value != "") {
+      friendsChoosenList = filterlist(searchFromChoosenFriends.value, friendsChoosenList);
+      console.log('564');
+    }
 
     friendsListContainier.innerHTML = templateFn(friendsList);
     friendsChoosenListContainier.innerHTML = templateFn(friendsChoosenList);
@@ -130,7 +154,6 @@ function handleDragOver(e) {
 
 function handleDropChoosen(e) {
     var elId = e.dataTransfer.getData('text/html');
-    console.log(elId);
 
     if (e.stopPropagation) {
         e.stopPropagation(); // stops the browser from redirecting.
@@ -144,7 +167,6 @@ function handleDropChoosen(e) {
 
 function handleDrop(e) {
     var elId = e.dataTransfer.getData('text/html');
-    console.log(elId);
 
     if (e.stopPropagation) {
         e.stopPropagation(); // stops the browser from redirecting.
@@ -163,11 +185,17 @@ function handleDragEndEl(e) {
 }
 
 function initHandles() {
-    let friendsList = document.querySelector('#friends').querySelectorAll('.friend');
+    let friendsList = friendsListContainier.querySelectorAll('.friend');
+    let friendsChoosenList = friendsChoosenListContainier.querySelectorAll('.friend');
     let addBtnList = friendsListContainier.querySelectorAll('.move-btn');
     let removeBtnList = friendsChoosenListContainier.querySelectorAll('.move-btn');
 
     [].forEach.call(friendsList, function(friend) {
+        friend.addEventListener('dragstart', handleDragStart, false);
+        friend.addEventListener('dragend', handleDragEndEl, false);
+    });
+
+    [].forEach.call(friendsChoosenList, function(friend) {
         friend.addEventListener('dragstart', handleDragStart, false);
         friend.addEventListener('dragend', handleDragEndEl, false);
     });
@@ -187,9 +215,7 @@ function initHandles() {
 }
 
 function addBtnEvent() {
-    console.log('add El');
     let chooseEl = this.parentNode;
-    let chooseElHtml = chooseEl.outerHTML;
     let chooseElId = (chooseEl.dataset.id);
     addFriend(chooseElId);
 
@@ -197,7 +223,6 @@ function addBtnEvent() {
 }
 
 function deleteBtnEvent() {
-    console.log('remove El');
     let deleteEl = this.parentNode;
     let deleteElId = deleteEl.dataset.id;
 
@@ -220,4 +245,41 @@ function removeFriend(deleteElId) {
 
     initChoosenFriendsList();
     initHandles();
+}
+
+
+/* filter */
+function isMatching(full, chunk) {
+    var seachPatch = new RegExp(chunk, 'i');
+
+    if (full.search(seachPatch) === -1) {
+        return false;
+    }
+
+    return true;
+}
+
+searchFromFriends.addEventListener('keyup', searchEnter);
+searchFromChoosenFriends.addEventListener('keyup', searchEnter);
+
+function searchEnter(e) {
+  initChoosenFriendsList();
+  initHandles();
+}
+
+
+function filterlist(word, list) {
+    let filtredList = {};
+
+    for (var key in list) {
+        let friendName = list[key].name;
+        let isInList = isMatching(friendName, word);
+        console.log(friendName, word, '---', isInList);
+
+        if (isInList) {
+            filtredList[key] = list[key];
+        }
+      }
+
+    return filtredList;
 }
