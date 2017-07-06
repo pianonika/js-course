@@ -111,12 +111,10 @@ function initChoosenFriendsList() {
 
     if (searchFromFriends.value != "") {
       friendsList = filterlist(searchFromFriends.value, friendsList);
-      console.log('123');
     }
 
     if (searchFromChoosenFriends.value != "") {
       friendsChoosenList = filterlist(searchFromChoosenFriends.value, friendsChoosenList);
-      console.log('564');
     }
 
     friendsListContainier.innerHTML = templateFn(friendsList);
@@ -140,17 +138,15 @@ new Promise(resolve => window.onload = resolve)
 function handleDragStart(e) {
     e.dataTransfer.effectAllowed = 'copy';
     e.dataTransfer.setData('text/html', this.dataset.id);
-    console.log(e.dataTransfer);
 
     this.style.opacity = "0.5";
 
-    // let dragView = this.cloneNode(true);
-    // dragView.style.width = "361px";
-    // dragView.style.backgroundColor = "red";
-    // dragView.style.display = "none";
-    // document.body.appendChild(dragView);
-    // e.dataTransfer.setDragImage(dragView, 0, 0);
-    // console.log(dragView.style);
+    let dragView = this.cloneNode(true);
+    dragView.style.width = "361px";
+    dragView.style.backgroundColor = "red";
+    dragView.style.display = "none";
+    document.body.appendChild(dragView);
+    e.dataTransfer.setDragImage(dragView, 0, 0);
 }
 
 function handleDragOver(e) {
@@ -172,7 +168,6 @@ function handleDropChoosen(e) {
 
     let elSelecor = '[data-id="'+ elId +'"]';
     let isInLIst = !(e.target.querySelector(elSelecor));
-    console.log(e.target, isInLIst);
     if (isInLIst) {
         addFriend(elId);
     }
@@ -190,7 +185,6 @@ function handleDrop(e) {
 
     let elSelecor = '[data-id="'+ elId +'"]';
     let isInLIst = !(e.target.querySelector(elSelecor));
-    console.log(e.target, isInLIst);
     if (isInLIst) {
       removeFriend(elId);
     }
@@ -294,7 +288,6 @@ function filterlist(word, list) {
     for (var key in list) {
         let friendName = list[key].name;
         let isInList = isMatching(friendName, word);
-        console.log(friendName, word, '---', isInList);
 
         if (isInList) {
             filtredList[key] = list[key];
