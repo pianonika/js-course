@@ -140,6 +140,17 @@ new Promise(resolve => window.onload = resolve)
 function handleDragStart(e) {
     e.dataTransfer.effectAllowed = 'copy';
     e.dataTransfer.setData('text/html', this.dataset.id);
+    console.log(e.dataTransfer);
+
+    this.style.opacity = "0.5";
+
+    // let dragView = this.cloneNode(true);
+    // dragView.style.width = "361px";
+    // dragView.style.backgroundColor = "red";
+    // dragView.style.display = "none";
+    // document.body.appendChild(dragView);
+    // e.dataTransfer.setDragImage(dragView, 0, 0);
+    // console.log(dragView.style);
 }
 
 function handleDragOver(e) {
@@ -159,27 +170,36 @@ function handleDropChoosen(e) {
         e.stopPropagation(); // stops the browser from redirecting.
     }
 
-    // this.innerHTML += elHtml;
-    addFriend(elId);
+    let elSelecor = '[data-id="'+ elId +'"]';
+    let isInLIst = !(e.target.querySelector(elSelecor));
+    console.log(e.target, isInLIst);
+    if (isInLIst) {
+        addFriend(elId);
+    }
+
 
     return false;
 }
 
 function handleDrop(e) {
-    var elId = e.dataTransfer.getData('text/html');
+    let elId = e.dataTransfer.getData('text/html');
 
     if (e.stopPropagation) {
         e.stopPropagation(); // stops the browser from redirecting.
     }
 
-    // this.innerHTML += elHtml;
-    removeFriend(elId);
+    let elSelecor = '[data-id="'+ elId +'"]';
+    let isInLIst = !(e.target.querySelector(elSelecor));
+    console.log(e.target, isInLIst);
+    if (isInLIst) {
+      removeFriend(elId);
+    }
 
     return false;
 }
 
 function handleDragEndEl(e) {
-    // removeFriend(elId);
+    this.style.opacity = "1";
 
     return false;
 }
