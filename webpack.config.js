@@ -15,7 +15,7 @@ loaders.push({
 
 module.exports = {
     entry: {
-        main: './scipts.js'
+        main: './script.js'
         // ,
         // dnd: './src/dnd.js'
     },

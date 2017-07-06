@@ -50,18 +50,7 @@ var template = `
 {{/each}}
 `;
 
-var template2= `
-{{#each this}}
-  <div class="friend" draggable="true" data-id="{{@key}}">
-    <img src="{{photo}}">
-    <div class="name">{{name}}</div>
-    <div class="move-btn"></div>
-  </div>
-{{/each}}
-`;
-
 var templateFn = Handlebars.compile(template);
-var templateFn2 = Handlebars.compile(template2);
 
 myStorage = localStorage;
 
@@ -87,11 +76,16 @@ function friendsListInit(response) {
     }
     if (isListInLocalstorage) {
         initChoosenFriendsList();
+    } else {
+      friendsChoosenListContainier.innerHTML = templateFn(friendsChoosenList);
     }
 }
 
 function initChoosenFriendsList() {
     friendsChoosenList = [];
+    for (var key in defaultList) {
+      friendsList[key] = defaultList[key];
+    }
 
     choosenIdList.forEach(function (item, i) {
         let id = choosenIdList[i];
@@ -102,7 +96,7 @@ function initChoosenFriendsList() {
     console.log(friendsChoosenList);
 
     friendsListContainier.innerHTML = templateFn(friendsList);
-    friendsChoosenListContainier.innerHTML = templateFn2(friendsChoosenList);
+    friendsChoosenListContainier.innerHTML = templateFn(friendsChoosenList);
 }
 
 new Promise(resolve => window.onload = resolve)
@@ -121,7 +115,7 @@ new Promise(resolve => window.onload = resolve)
 /* D&D */
 function handleDragStart(e) {
     e.dataTransfer.effectAllowed = 'copy';
-    e.dataTransfer.setData('text/html', this.outerHTML);
+    e.dataTransfer.setData('text/html', this.dataset.id);
 }
 
 function handleDragOver(e) {
@@ -134,21 +128,36 @@ function handleDragOver(e) {
     return false;
 }
 
-function handleDrop(e) {
-    var elHtml = e.dataTransfer.getData('text/html');
+function handleDropChoosen(e) {
+    var elId = e.dataTransfer.getData('text/html');
+    console.log(elId);
 
     if (e.stopPropagation) {
         e.stopPropagation(); // stops the browser from redirecting.
     }
 
-    this.innerHTML += elHtml;
-    chooseEl(this);
+    // this.innerHTML += elHtml;
+    addFriend(elId);
+
+    return false;
+}
+
+function handleDrop(e) {
+    var elId = e.dataTransfer.getData('text/html');
+    console.log(elId);
+
+    if (e.stopPropagation) {
+        e.stopPropagation(); // stops the browser from redirecting.
+    }
+
+    // this.innerHTML += elHtml;
+    removeFriend(elId);
 
     return false;
 }
 
 function handleDragEndEl(e) {
-    this.outerHTML = '';
+    // removeFriend(elId);
 
     return false;
 }
@@ -164,41 +173,51 @@ function initHandles() {
     });
 
     friendsChoosenListContainier.addEventListener('dragover', handleDragOver, false);
-    friendsChoosenListContainier.addEventListener('drop', handleDrop, false);
+    friendsChoosenListContainier.addEventListener('drop', handleDropChoosen, false);
+    friendsListContainier.addEventListener('dragover', handleDragOver, false);
+    friendsListContainier.addEventListener('drop', handleDrop, false);
 
     [].forEach.call(addBtnList, function(moveBtn) {
-      moveBtn.addEventListener('click', chooseEl);
+      moveBtn.addEventListener('click', addBtnEvent);
     });
 
     [].forEach.call(removeBtnList, function(removeBtn) {
-      removeBtn.addEventListener('click', deleteEl);
+      removeBtn.addEventListener('click', deleteBtnEvent);
     });
 }
 
-function chooseEl(chooseEl = this) {
+function addBtnEvent() {
+    console.log('add El');
     let chooseEl = this.parentNode;
     let chooseElHtml = chooseEl.outerHTML;
     let chooseElId = (chooseEl.dataset.id);
-      console.log('add El', chooseEl);
+    addFriend(chooseElId);
 
+    // localStorage.setItem('choosenIdList', JSON.stringify([110539, 272177, 518506,661817, 684192, 4422819]));
+}
+
+function deleteBtnEvent() {
+    console.log('remove El');
+    let deleteEl = this.parentNode;
+    let deleteElId = deleteEl.dataset.id;
+
+    removeFriend(deleteElId);
+
+    // localStorage.setItem('choosenIdList', JSON.stringify([110539, 272177, 518506,661817, 684192, 4422819]));
+}
+
+function addFriend(chooseElId) {
     choosenIdList.push(Number(chooseElId));
     localStorage.setItem('choosenIdList', JSON.stringify(choosenIdList));
 
     initChoosenFriendsList();
     initHandles();
-    // localStorage.setItem('choosenIdList', JSON.stringify([110539, 272177, 518506,661817, 684192, 4422819]));
 }
 
-function deleteEl() {
-  console.log('remove El');
-    let deleteEl = this.parentNode;
-    let deleteElId = deleteEl.dataset.id;
-
-    choosenIdList.splice(choosenIdList.indexOf(deleteElId), 1);
-    console.log(choosenIdList);
+function removeFriend(deleteElId) {
+    choosenIdList.splice(choosenIdList.indexOf(Number(deleteElId)), 1);
     localStorage.setItem('choosenIdList', JSON.stringify(choosenIdList));
 
     initChoosenFriendsList();
     initHandles();
-    // localStorage.setItem('choosenIdList', JSON.stringify([110539, 272177, 518506,661817, 684192, 4422819]));
 }
