@@ -8,6 +8,7 @@ let friendsChoosenList = {};
 let idList = [];
 let searchFromFriends = document.querySelector('#searchFromFriends');
 let searchFromChoosenFriends = document.querySelector('#searchFromChoosenFriends');
+let safeButton = document.querySelector('#safe');
 
 
 function vkApi(method, options) {
@@ -71,8 +72,6 @@ myStorage = localStorage;
 
 if (isListInLocalstorage) {
     choosenIdList = JSON.parse(localStorage.getItem('choosenIdList'));
-} else {
-    localStorage.setItem('choosenIdList', []);
 }
 
 function friendsListInit(response) {
@@ -92,7 +91,7 @@ function friendsListInit(response) {
     if (isListInLocalstorage) {
         initChoosenFriendsList();
     } else {
-      friendsChoosenListContainier.innerHTML = templateFn(friendsChoosenList);
+      friendsListContainier.innerHTML = templateFn(friendsList);
     }
 }
 
@@ -136,17 +135,10 @@ new Promise(resolve => window.onload = resolve)
 
 /* D&D */
 function handleDragStart(e) {
-    e.dataTransfer.effectAllowed = 'copy';
+    e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', this.dataset.id);
 
     this.style.opacity = "0.5";
-
-    let dragView = this.cloneNode(true);
-    dragView.style.width = "361px";
-    dragView.style.backgroundColor = "red";
-    dragView.style.display = "none";
-    document.body.appendChild(dragView);
-    e.dataTransfer.setDragImage(dragView, 0, 0);
 }
 
 function handleDragOver(e) {
@@ -232,8 +224,6 @@ function addBtnEvent() {
     let chooseEl = this.parentNode;
     let chooseElId = (chooseEl.dataset.id);
     addFriend(chooseElId);
-
-    // localStorage.setItem('choosenIdList', JSON.stringify([110539, 272177, 518506,661817, 684192, 4422819]));
 }
 
 function deleteBtnEvent() {
@@ -241,13 +231,10 @@ function deleteBtnEvent() {
     let deleteElId = deleteEl.dataset.id;
 
     removeFriend(deleteElId);
-
-    // localStorage.setItem('choosenIdList', JSON.stringify([110539, 272177, 518506,661817, 684192, 4422819]));
 }
 
 function addFriend(chooseElId) {
     choosenIdList.push(Number(chooseElId));
-    localStorage.setItem('choosenIdList', JSON.stringify(choosenIdList));
 
     initChoosenFriendsList();
     initHandles();
@@ -255,7 +242,6 @@ function addFriend(chooseElId) {
 
 function removeFriend(deleteElId) {
     choosenIdList.splice(choosenIdList.indexOf(Number(deleteElId)), 1);
-    localStorage.setItem('choosenIdList', JSON.stringify(choosenIdList));
 
     initChoosenFriendsList();
     initHandles();
@@ -295,4 +281,10 @@ function filterlist(word, list) {
       }
 
     return filtredList;
+}
+
+safeButton.addEventListener('click', safeChoosenFriends);
+
+function safeChoosenFriends() {
+    localStorage.setItem('choosenIdList', JSON.stringify(choosenIdList));
 }
