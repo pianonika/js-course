@@ -37,8 +37,8 @@ module.exports = {
         new ExtractTextPlugin('styles.css'),
         new HtmlPlugin({
             title: 'Main Homework',
-            template: 'index.hbs',
-            filename: 'vk-list.html',
+            template: 'index.html',
+            filename: 'index.html',
             chunks: ['main']
         }),
         // new HtmlPlugin({
