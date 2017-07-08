@@ -160,6 +160,7 @@ function handleDropChoosen(e) {
 
     let elSelecor = '[data-id="'+ elId +'"]';
     let isInLIst = !(e.target.querySelector(elSelecor));
+
     if (isInLIst) {
         addFriend(elId);
     }
@@ -176,8 +177,9 @@ function handleDrop(e) {
 
     let elSelecor = '[data-id="'+ elId +'"]';
     let isInLIst = !(e.target.parentNode.querySelector(elSelecor));
+
     if (isInLIst) {
-      removeFriend(elId);
+        removeFriend(elId);
     }
 
     return false;
@@ -262,10 +264,9 @@ searchFromFriends.addEventListener('keyup', searchEnter);
 searchFromChoosenFriends.addEventListener('keyup', searchEnter);
 
 function searchEnter(e) {
-  initChoosenFriendsList();
-  initHandles();
+    initChoosenFriendsList();
+    initHandles();
 }
-
 
 function filterlist(word, list) {
     let filtredList = {};
