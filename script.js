@@ -135,7 +135,7 @@ new Promise(resolve => window.onload = resolve)
 
 /* D&D */
 function handleDragStart(e) {
-    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.effectAllowed = 'copy';
     e.dataTransfer.setData('text/html', this.dataset.id);
 
     this.style.opacity = "0.5";
@@ -164,7 +164,6 @@ function handleDropChoosen(e) {
         addFriend(elId);
     }
 
-
     return false;
 }
 
@@ -176,7 +175,7 @@ function handleDrop(e) {
     }
 
     let elSelecor = '[data-id="'+ elId +'"]';
-    let isInLIst = !(e.target.querySelector(elSelecor));
+    let isInLIst = !(e.target.parentNode.querySelector(elSelecor));
     if (isInLIst) {
       removeFriend(elId);
     }
