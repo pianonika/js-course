@@ -179,7 +179,7 @@ function mapInit() {
 
         if (e.target.id=='linkPlacemark') {
             for (var i=0; i<organizationMarks.length; i++) {
-                if (organizationMarks[i].properties.get ('balloonContentHeader')==e.target.innerText) {
+                if (organizationMarks[i].properties.get ('balloonContentHeader')==e.target.innerText ) {
                      myMap.balloon.open(organizationMarks[i].properties.get ('balloonCoords'),
                     {
                         contentHeader: organizationMarks[i].properties.get ('balloonContentHeader'),
@@ -201,30 +201,29 @@ function mapInit() {
               alert('Не все поля заполнены! Отзыв не будет добавлен')
           } else {
               if (currentAddress=='') {
-                  currentAddress=myMap.balloon._balloon._data.properties.get('balloonContentHeader');
+                if (!myMap.balloon._balloon.contentHeader) {
+                  // currentAddress = 'Москва, Васильевская улица';
+                  currentAddress = myMap.balloon._balloon._data.properties._data.balloonContentHeader;
+                } else {
+                  currentAddress = myMap.balloon._balloon.contentHeader;
+                }
               }
-
-              console.log('Адрес', currentAddress);
-
               var itNewPlacemark=true;
 
               if (myPlacemarkList.some((myPlacemarkListItem)=> {
                   return myPlacemarkListItem.address == currentAddress
               })) {
-                  console.log('есть уже метка по адресу '+currentAddress);
                   itNewPlacemark = false;
-              } else {
-                  console.log('добавляем новую метку');
               }
-
               var newReview = {
                   coords: currentCoords,
                   address: currentAddress,
                   place: inputOrganization.value,
                   name: inputName.value,
-                  Review: inputReview.value,
+                  review: inputReview.value,
                   date: getCurrentDateTime()
               };
+
               myPlacemarkList.push(newReview);
 
               localStorage.setItem('myPlacemarkList', JSON.stringify(myPlacemarkList));
@@ -248,6 +247,10 @@ function mapInit() {
               }
               listReviewForAddress.innerHTML=getListReviewForAddress(currentAddress);
 
+              inputOrganization.value = '';
+              inputName.value = '';
+              inputReview.value = '';
+
               return myPlacemark;
           }
       }
@@ -260,7 +263,7 @@ function mapInit() {
                   balloonContentBody: getContentBalloon(element.address),
                   balloonPlace: element.place,
                   balloonDate: element.date,
-                  balloonReview: element.Review,
+                  balloonReview: element.review,
                   balloonCoords: element.coords
               },
               {

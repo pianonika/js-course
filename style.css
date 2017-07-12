@@ -62,6 +62,7 @@ body
   line-height: 23px;
   border: none;
   margin-top: 10px;
+  outline: none;
 }
 .btn:hover {
   background-color: #d26450;
@@ -85,6 +86,7 @@ body
   color: #929292;
   display: block;
   border: 1px solid #929292;
+  outline: none;
 }
 input.input {
   margin-bottom: 10px;
