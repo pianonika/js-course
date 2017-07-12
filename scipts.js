@@ -33,7 +33,7 @@ function mapInit() {
     var BalloonLayout = ymaps.templateLayoutFactory.createClass(
         '<div class="templateBalloon">' +
         '<a class="close" id="close" href="#">&times;</a>' +
-        '$[[options.contentLayout observeSize maxWidth=350  maxHeight=520]]' +
+        '$[[options.contentLayout observeSize maxWidth=350  maxHeight=460]]' +
         '</div>');
 
     var BalloonContentLayout = ymaps.templateLayoutFactory.createClass(
@@ -104,7 +104,7 @@ function mapInit() {
         htmlText+='<h4 class="form__title"> ВАШ ОТЗЫВ</h4>';
         htmlText+='<input type=form__title" text" class="input" id="inputName" placeholder="Имя">';
         htmlText+='<input type="text" class="input" id="inputOrganization" placeholder="Компания">';
-        htmlText+='<textarea class="input" placeholder="Ваши впечатления" id="inputReview" rows="6"></textarea>';
+        htmlText+='<textarea class="input" placeholder="Ваши впечатления" id="inputReview" rows="3"></textarea>';
         htmlText+='<button id=\'addbutton\' class="btn" type=\'button\'>Добавить</button>';
         htmlText+='</form>';
 
