@@ -6,11 +6,8 @@ let dataPoints = [];
 let currentAddress='';
 let currentCoords;
 let organizationMarks=[];
-let myPlacemarkList;
-
-if (localStorage.getItem('myPlacemarkList')) {
-    myPlacemarkList=JSON.parse(localStorage.getItem('myPlacemarkList'));
-}
+let myPlacemarkList = [];
+let myPlacemarkListItem = {};
 
 function mapInit() {
     let myPlacemark;
@@ -36,7 +33,7 @@ function mapInit() {
     var BalloonLayout = ymaps.templateLayoutFactory.createClass(
         '<div class="templateBalloon">' +
         '<a class="close" id="close" href="#">&times;</a>' +
-        '$[[options.contentLayout observeSize maxWidth=310  maxHeight=500]]' +
+        '$[[options.contentLayout observeSize maxWidth=350  maxHeight=520]]' +
         '</div>');
 
     var BalloonContentLayout = ymaps.templateLayoutFactory.createClass(
@@ -73,19 +70,30 @@ function mapInit() {
         clusterBalloonPagerSize: 5
     });
 
+    if (localStorage.getItem('myPlacemarkList')) {
+        myPlacemarkList=JSON.parse(localStorage.getItem('myPlacemarkList'));
+    }
+
     myMap.geoObjects.add(clusterer);
+    function readLocalstorage() {
 
-    (function readLocalstorage() {
-        var organizationMarksAddress=[];
+      var organizationMarksAddress=[];
 
-        myPlacemarkList.forEach(function(item) {
-            organizationMarks.push(createPlacemark(item));
-            organizationMarksAddress.push(item.address);
-        });
+      for (var i=0;i<myPlacemarkList.length;i++) {
+          // если аджеса еще нет в списке
+          if (organizationMarksAddress.indexOf(myPlacemarkList[i].address)==-1) {
+              var myPlacemark= createPlacemark(myPlacemarkList[i]);
 
-        clusterer.add(organizationMarks);
-        myMap.geoObjects.add(clusterer);
-    })();
+              myMap.geoObjects.add(myPlacemark);
+              organizationMarksAddress.push(myPlacemarkList[i].address);
+              organizationMarks.push(myPlacemark);
+          }
+      }
+      clusterer.add(organizationMarks);
+      myMap.geoObjects.add(clusterer);
+
+    }
+    readLocalstorage();
 
     // получим содержимое формы ввода отзыва
     function getContentBalloon(address) {
@@ -93,11 +101,11 @@ function mapInit() {
 
         htmlText+='<div id="listReviewForAddress">'+(getListReviewForAddress(address)||'Отзывов пока нет')+'</div>';
         htmlText+='<form>';
-        htmlText+='<h4 style="color: #f6856e;"> ВАШ ОТЗЫВ</h4>';
-        htmlText+='<input type="text" class="input" id="inputName" placeholder="Имя"><br>';
-        htmlText+='<input type="text" class="input" id="inputOrganization" placeholder="Компания"><br>';
-        htmlText+='<textarea class="input" placeholder="Ваши впечатления" id="inputReview" rows="6"></textarea><br>';
-        htmlText+='<button id=\'addbutton\' type=\'button\'>Добавить</button>';
+        htmlText+='<h4 class="form__title"> ВАШ ОТЗЫВ</h4>';
+        htmlText+='<input type=form__title" text" class="input" id="inputName" placeholder="Имя">';
+        htmlText+='<input type="text" class="input" id="inputOrganization" placeholder="Компания">';
+        htmlText+='<textarea class="input" placeholder="Ваши впечатления" id="inputReview" rows="6"></textarea>';
+        htmlText+='<button id=\'addbutton\' class="btn" type=\'button\'>Добавить</button>';
         htmlText+='</form>';
 
         return htmlText;
@@ -107,16 +115,18 @@ function mapInit() {
     function getListReviewForAddress(address) {
         var content='';
 
-        myPlacemarkList
-          .filter((myPlacemarkListItem) => {
-              return myPlacemarkListItem.address==address
-          })
-          .forEach ( (myPlacemarkListItem) => {
-              content+='<b>'+myPlacemarkListItem.name+'</b> ';
-              content+=myPlacemarkListItem.place+' ';
-              content+=myPlacemarkListItem.date+'<br>';
-              content+=myPlacemarkListItem.Review+'<br>';
-          });
+        if (!!myPlacemarkList) {
+          myPlacemarkList
+            .filter((myPlacemarkListItem)=> {
+                return myPlacemarkListItem.address==address
+            })
+            .forEach ( (myPlacemarkListItem) => {
+                content+='<div class="listReviewForAddress__item"><b>'+myPlacemarkListItem.name+'</b> ';
+                content+=myPlacemarkListItem.place+' ';
+                content+=myPlacemarkListItem.date+'<br>';
+                content+=myPlacemarkListItem.Review+'</div>';
+            });
+        }
 
         return content;
     }
@@ -194,15 +204,18 @@ function mapInit() {
                   currentAddress=myMap.balloon._balloon._data.properties.get('balloonContentHeader');
               }
 
+              console.log('Адрес', currentAddress);
+
               var itNewPlacemark=true;
 
               if (myPlacemarkList.some((myPlacemarkListItem)=> {
                   return myPlacemarkListItem.address == currentAddress
               })) {
+                  console.log('есть уже метка по адресу '+currentAddress);
                   itNewPlacemark = false;
-              } /*else {
+              } else {
                   console.log('добавляем новую метку');
-              }*/
+              }
 
               var newReview = {
                   coords: currentCoords,
@@ -270,27 +283,28 @@ function mapInit() {
 function getCurrentDateTime() {
     var curDate = new Date();
 
-    var YY = curDate.getFullYY();
-    var MM = curDate.getMM()+1;
-    var DD = curDate.getDate();
-    var hh = curDate.gethh();
-    var mm = curDate.getmm();
-    var ss = curDate.getss();
+    var year = curDate.getFullYear();
+    var month = curDate.getMonth()+1;
+    var day = curDate.getDate();
+    var hh = curDate.getHours();
+    var mm = curDate.getMinutes();
+    var ss = curDate.getSeconds();
 
-    if (MM < 10) { MM = '0' + MM; }
-    if (DD < 10) { DD = '0' + DD; }
+    if (month < 10) { month = '0' + month; }
+    if (day < 10) { day = '0' + day; }
     if (hh < 10) { hh = '0' + hh; }
     if (mm < 10) { mm = '0' + mm; }
     if (ss < 10) { ss = '0' + ss; }
 
-    curDateFormated = YY + '.' + MM + '.' + DD+' ' + hh + ':' + mm + ':'+ss;
+    curDate = year + '.' + month + '.' + day +' ' + hh + ':' + mm + ':' + ss;
 
-    return curDateFormated;
+    return curDate;
 }
 
 new Promise(resolve => window.onload = resolve)
     .then(response => new Promise(resolve => ymaps.ready(resolve)))
     .then(friends => {
+        console.log('карта загружена');
         mapInit();
         return true;
     })

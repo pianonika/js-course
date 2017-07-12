@@ -10,149 +10,93 @@ body
   height: 100vh;
 }
 
-.popup {
-  width: 800px;
-  height: 600px;
+.templateBalloon {
+  width: 350px;
+  height: 500px;
   overflow: hidden;
   margin: auto;
   border-radius: 12px;
   background-color: #fff;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-50%);
-  position: absolute;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
-.popup_header {
+.templateBalloonHeader {
   color: #fff;
   background-color: #f68570;
+  font-size: 11px;
   padding: 10px 23px;
+  width: 304px;
 }
-.popup_content {
+.templateBalloonBody {
   flex-grow: 1;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  justify-content: space-between;
+  width: calc(100% - 36px);
+  padding: 12px 18px;
+  margin-top: 10px;
+  color: #404040;
+  height: calc(100% - 64px);
 }
-.popup_side {
+#listReviewForAddress{
+  height: 125px;
+  max-height: 125px;
+  overflow-y: auto;
+}
+.listReviewForAddress__item {
   flex-grow: 0;
   flex-shrink: 0;
   flex-basis: 50%;
   overflow: hidden;
-}
-.popup_search {
-  background-color: #f2f2f2;
-  padding: 12px 0 12px 18px;
-  overflow: hidden;
-}
-.popup_friends{
-  background-color: #fff;
-  padding: 12px 18px;
-  font-weight: bold;
-}
-.popup_friends:not(first-of-type) {
-  border-left: 1px solid #f2f2f2;
-}
-.popup_friends-title {
-  margin: 6px 0;
-}
-.popup_footer {
-  color: #fff;
-  background-color: #f2f2f2;
-  padding: 10px 23px;
-}
-.popup_list {
-  overflow-y: scroll;
-  width: calc(100% + 100px);
-  height: 410px;
+  font-size: 12px;
+  margin-bottom: 10px;
 }
 .btn {
-  background-color: #f68570;
   border-radius: 12px;
   color: #fff;
-  padding: 10px 23px;
+  background-color: #f68570;
+  padding: 0 23px;
   text-decoration: none;
   float: right;
+  line-height: 23px;
+  border: none;
+  margin-top: 10px;
 }
 .btn:hover {
-  background-color: #f75537;
+  background-color: #d26450;
 }
-.input-field {
-  padding: 9px 23px 9px 36px;
-  float: left;
+#close {
+  position: absolute;
+  right: 10px;
+  top: 4px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 20px;
+  text-decoration: none;
+}
+.input {
+  padding: 0 15px;
+  line-height: 23px;
   border-radius: 16px;
   border: none;
-  width: calc(100% - 12px);
+  width: 100%;
   box-sizing: border-box;
-}
-
-#friends
-{
-  display: flex;
-  flex-wrap: wrap;
-  flex-wrap: wrap;
-  flex-direction: column;
-  cursor: move;
-}
-
-#friendsChoosen {
-  min-height: 100%;
-}
-
-#friendsChoosen.over {
-  border: 2px solid #f2f2f2;
-}
-
-.friend {
-  display: flex;
-  flex-direction: row;
-  border-top: 1px solid #f2f2f2;
-  align-items: center;
-  width: calc(100% - 85px);
-  position: relative;
-}
-.friend:hover {
-  background: #f2f2f2;
-}
-.move-btn {
-  width: 19px;
-  height: 19px;
-  font-size: 33px;
-  line-height: 19px;
-  color: #b5b5b5;
-  font-weight: bold;
-  position: absolute;
-  cursor: pointer;
-  right: 10px;
-}
-.move-btn::after {
-  content: '+';
+  color: #929292;
   display: block;
-  width: 19px;
-  height: 19px;
-  position: absolute;
+  border: 1px solid #929292;
 }
-#friendsChoosen .move-btn::after  {
-  content: 'X';
-  font-size: 21px;
+input.input {
+  margin-bottom: 10px;
 }
 
-
-.friend img
-{
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  margin: 7px;
+.form__title {
+  color: #f6856e;
+  margin: 10px 0;
+  font-size: 14px;
 }
-
-
-[draggable] {
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  user-select: none;
-  /* Required to make elements draggable in old WebKit */
-  -khtml-user-drag: element;
-  -webkit-user-drag: element;
+form {
+    border-top: 1px solid #e1e1e1;
+    padding-top: 10px;
+    margin-top: 20px;
 }
